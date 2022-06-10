@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" id="viewport_meta">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta http-equiv="Expires" content="0"/>
+    <title>Smart Diagnosis</title>
+    <link rel="stylesheet" href="../static/style/report_style.css">
+    <link rel="icon" href="../static/favicon.ico">
+</head>
+
+<body>
+<header>
+    <img class="logo" src="../static/images/logo_home.png" alt='logo_home'>
+    <div class='company_title'>CardiVu API Demo</div>
+</header>
+
+<canvas id="report_canvas"></canvas>
+<div class="btn_box">
+    <p id="btn_info">분석 리포트를 저장 또는 본인 계정 이메일로 전송합니다.</p>
+    <button onclick="download()">저장하기</button>
+    <button onclick="send()">전송하기</button>
+</div>
+
+<div class="scroll_box">
+    <section>
+        <div class="container">
+            <h2>홍채 인식을 통한 스트레스 및 자율신경계 분석 리포트</h2>
+            <img class="logo_rep" src="../static/images/logo.png" alt='report_logo'>
+
+            <div id="main">
+                <div class="box">
+                    <div class="image">
+                        <div id="profile_image"></div>
+                    </div>
+                    <div id="section">
+                        <div>
+                            <div class="title">
+                                <text>이름</text>
+                            </div>
+                            <div class="profile"><span id="profile_name"></span></div>
+                        </div>
+                        <div>
+                            <div class="title">
+                                <text>나이</text>
+                            </div>
+                            <div class="profile"><span id="profile_age"></span></div>
+                        </div><!--back-->
+                        <div>
+                            <div class="title">
+                                <text>성별</text>
+                            </div>
+                            <div class="profile"><span id="profile_gender"></span></div>
+                        </div><!--back-->
+                        <div>
+                            <div class="title">
+                                <text>생성일</text>
+                            </div>
+                            <div class="profile"><span id="profile_date"></span></div>
+                        </div><!--back-->
+                    </div><!--section-->
+                </div><!--box-->
+
+                <div id="sidebar">
+                    <h5><a class='s'>스트레스 분석 Stress Analysis</a><br> <span><span
+                            class='s'>귀하의 평균 스트레스 척도는</span><b> <span id="score_value" style="display: none"></span></b><text>
+                        <span id="score_text">보통</span></text> <span class='s'>입니다.</span></span></h5>
+
+                    <div class="analysis">
+                        <div class="graph">
+                            <span class="inner_graph" id="inner_graph"></span>
+                        </div>
+                        <ul>
+                            <li>낮은수준</li>
+                            <li>보통수준</li>
+                            <li>높은수준</li>
+                        </ul>
+                        <br>
+                        <p><span class='s'>스트레스 지수는 </span> <b><span id="score_value2"></span> </b>점 입니다.
+                        </p>
+                    </div>
+                    <div class="score"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="result">
+            <p><span class="anal_title">자율신경계 분석 HRV Analysis</span></p>
+            <div class="result_view">
+                <div class="bpm">
+                    <ul>평균 맥박(Mean BPM)</ul>
+                    <div class="chart"><img src="../static/images/bpm.png"></div>
+                    <div class="compass"><img id="bpm_arrow" src="../static/images/click.png"></div>
+                    <text><b><span id="mean_bpm_value"></span></b><br>(BPM)</text>
+                </div><!--bpm-->
+
+                <div class="lfhf">
+                    <ul>자율신경계 균형도(LF/HF)</ul>
+                    <img src="../static/images/lfhf.png">
+                    <div class="compass"><img id="lfhf_arrow" src="../static/images/click.png"></div>
+                    <text><b><span id="lf_and_hf_value"></span></b><br>(%)</text>
+                </div><!--lfhf-->
+
+                <div class="sdnn">
+                    <ul>맥박 표준 편차(SDNN)</ul>
+                    <img src="../static/images/sdnn.png">
+                    <div class="compass"><img id="sdnn_arrow" src="../static/images/click.png"></div>
+                    <div class="max_txt">
+                        <text><span id="sdnn_max">200</span></text>
+                    </div>
+                    <text><b><span id="sdnn_value"></span></b><br>(ms)</text>
+                </div><!--sdnn-->
+
+                <div class="rmssd">
+                    <ul>심장 안정도(RMSSD)</ul>
+                    <img src="../static/images/rmssd.png">
+                    <div class="compass"><img id="rmssd_arrow" src="../static/images/click.png"></div>
+                    <div class="max_txt">
+                        <text><span id="rmssd_max">100</span></text>
+                    </div>
+                    <text><b><span id="rmssd_value"></span></b><br>(ms)</text>
+                </div><!--rmssd-->
+            </div>
+        </div>
+
+        <div class="interpretation">
+            <div class="box1">
+                <p><span name='t'>평균 맥박(Mean BPM)</span><br>
+                    <a name='t1'>평균 맥박은 분당 60~100회이며, 60회 이하면 서맥(Bradycardia),
+                        100회 이상이면 빈맥(Tachycardia) 이라고 합니다.
+                        서맥과 빈맥은 부정맥으로 돌연사·뇌졸중의 주요 원인입니다.</a>
+                </p>
+            </div><!--"box1-->
+            <div class="box2">
+                <p>
+                    <span name='t'>자율신경계 균형도(LF/HF)</span><br>
+                    <a name='t1'>자율신경계 균형도는 교감 신경과 부교감 신경의 균형을 체크하는 중요한 지표입니다.
+                        교감 신경은 긴장과 흥분을 담당하는 신경이며, 부교감 신경은 안정과
+                        억제를 담당하는 신경으로 두 신경계가 균형을 이루어야 합니다.<br>
+                        체내의 항상성이 깨지면(즉, 자율신경실조증) 혈압·맥박·발한·배뇨·배변 등
+                        신체의 기본적인 기능에 이상이 생깁니다.</a>
+                </p>
+            </div><!--"box2-->
+            <div class="box3">
+                <p>
+                    <span name='t'>맥박 표준 편차(SDNN)</span><br>
+                    <a name='t1'>맥박 표준 편차는 스트레스에 대한 저항력을 나타냅니다.<br>
+                        동일 연령대 및 성별의 표준 범위보다 수치가 낮을 경우 스트레스에 대한 저항력이 약해진 것이며,
+                        건강 상태가 안 좋을 수 있습니다.<br>
+                        꾸준한 운동 및 다이어트를 통해 스트레스에 대한 저항력을 높이는 것이 좋습니다.</a>
+                </p>
+            </div><!--"box3-->
+            <div class="box4">
+                <p>
+                    <span name='t'>심장 안정도(RMSSD)</span><br>
+                    <a name='t1'>심장 안정도는 심장의 부교감 신경(안정)의 조절 능력을 측정합니다.<br>
+                        동일 연령대 및 성별의 표준 범위보다 수치가 낮을 경우,
+                        심장 질환의 발병도가 높을 수 있음을 의미합니다.<br>
+                        주요 심장질환에는 부정맥·심부전증·고혈압·동맥경화증·관상동맥질환 등이 있습니다.</a>
+                </p>
+            </div><!--"box4-->
+        </div><!--interpretation-->
+        <p id="under_info">※ CardiVu API Demo는 의료기기가 아닙니다.</p>
+    </section>
+</div>
+
+<div id="modal">
+    <div class="modal_content">
+        <p><span id='email'></span></p>
+        <button type="button" onclick="close_modal()">취소</button>
+        <button type="button" onclick="confirm()">확인</button>
+    </div>
+    <div class="modal_layer"></div>
+</div>
+</body>
+<script src="../static/js/html2canvas.js"></script>
+<script src="../static/js/api_report.js"></script>
+</html>

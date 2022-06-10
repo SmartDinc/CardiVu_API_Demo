@@ -1,0 +1,1679 @@
+@font-face {
+    font-family: 'NanumSquare';
+    src: local('NanumSquare'),
+    url(../fonts/NanumSquareL.otf);
+}
+
+html{
+    background-color: #518eed;
+}
+
+body {
+    height: 925px;
+    font-family: 'NanumSquare';
+    background-image: url('../images/BG.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    margin: auto;
+    padding: auto;
+}
+
+header {
+    display: grid;
+    grid-template-columns: 30% 40% 30%;
+    text-align: center;
+}
+
+.logo {
+    width: 240px;
+    margin-top: 30px;
+    margin-left: 10%;
+    cursor: pointer;
+}
+
+.title {
+    color: #ffffff;
+    text-align: center;
+    font-family: 'Century Gothic';
+    font-size: 2.2rem;
+    font-weight: 600;
+    line-height: 2;
+    margin-top: 20px;
+    cursor: default;
+}
+
+.lng {
+    width: 200px;
+    margin-top: 35px;
+    margin-right: 5%;
+    float: right;
+    padding: auto;
+}
+
+header a {
+    color: #ffffff;
+    font-size: 1rem;
+    line-height: 2;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    cursor: pointer;
+}
+
+.kr {
+    padding-right: 30px;
+    border-right: solid 0.15rem #ffffff
+}
+
+.en {
+    margin-left: 30px;
+}
+
+.main_style {
+    height: calc(925px - 120px);
+    margin-top: 30px;
+    text-align: center;
+}
+
+.camera {
+    position: relative;
+    top: 50px;
+    width: 200px;
+    height: 145px;
+    background-image: url('../images/camera.png');
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    margin: auto;
+}
+
+.main_style h2 {
+    color: rgb(255, 250, 250);
+    font-size: 2rem;
+    margin-top: 100px;
+    font-weight: 400;
+}
+
+.main_style b {
+    font-weight: 800;
+}
+
+.main_style p {
+    color: rgb(0, 58, 165);
+    font-size: 1.4rem;
+    font-weight: 600;
+    line-height: 1.6;
+    margin-top: 30px;
+}
+
+.video {
+    display: none;
+}
+
+.canvas {
+    display: none;
+    margin: auto;
+    width: 900px;
+    transform: rotateY(180deg);
+}
+
+.guide {
+    position: relative;
+    width: 400px;
+    top: -450px;
+    margin-bottom: -400px;
+}
+
+.main_canvas {
+    display: none;
+    grid-template-columns: 190px 900px 190px;
+    column-gap: 15px;
+    margin: auto;
+}
+
+.graph_container {
+    display: grid;
+    grid-template-rows: 190px 145px 145px;
+    row-gap: 10px;
+}
+
+.flow_container {
+    display: grid;
+}
+
+.side_graph {
+    box-shadow: #ffffff 0 0 3px;
+    border-radius: 10px;
+}
+
+.no_iris {
+    position: relative;
+    top: 50px;
+    width: 100px;
+    opacity: 0.2;
+}
+
+.iris_flow {
+    position: relative;
+    top: -92px;
+    width: 190px;
+    height: 190px;
+    box-shadow: #ffffff 0 0 3px;
+    border-radius: 10px;
+}
+
+.data_flow {
+    width: 190px;
+    height: 500px;
+    box-shadow: #0080ff 0 0 3px;
+    background-color: #ffffff55;
+    border-radius: 10px;
+}
+
+.data_flow p {
+    position: relative;
+    top: -50px;
+    font-family: 'Century Gothic';
+    font-size: 0.9rem;
+    margin-top: 60px;
+}
+
+.data_flow div {
+    position: relative;
+    top: -52px;
+    font-size: 0.78rem;
+    color: rgb(1, 4, 41);
+    text-align: left;
+    padding-left: 14px;
+    margin-top: 0.5px;
+}
+
+.graph {
+    display: none;
+    width: 900px;
+    height: 16px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 30px;
+    margin: 0 auto;
+    margin-top: 15px;
+}
+
+.graph span {
+    display: block;
+    width: 0%;
+    height: 15px;
+    background: linear-gradient(to right, #2c3473, #52c4ff);
+    box-shadow: #ffffff 0 0 10px;
+    border-radius: 30px;
+}
+
+.warn_div {
+    display: none;
+    margin-top: 35px;
+}
+
+.warning {
+    vertical-align: middle;
+    margin-bottom: 8px;
+}
+
+.stream_alert {
+    color: rgba(255, 255, 255);
+    font-size: 2rem;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-left: 25px;
+}
+
+input {
+    display: none;
+}
+
+.button_box {
+    display: grid;
+    grid-template-rows: 50% 50%;
+    row-gap: 8px;
+    margin-top: 100px;
+}
+
+.stream_button, .pass_button {
+    width: 450px;
+    font-size: 1.4rem;
+    font-weight: 600;
+    padding: 8px 25px;
+    color: rgba(255, 255, 255, 0.85);
+    background-color: rgba(255, 255, 255, 0);
+    border: 0.15rem solid #ffffff;
+    border-radius: 30px;
+    transition: all 200ms cubic-bezier(0.390, 0.500, 0.150, 1.360);
+    box-shadow: rgba(255, 255, 255, 0) 0 0 0 2px inset;
+    cursor: pointer;
+    visibility: hidden;
+}
+
+.stream_button {
+    background-color: #0349acc0;
+    border: None;
+    padding: 10px 25px;
+}
+
+.pass_button {
+    background-color: rgba(255, 255, 255, 0);
+    border: 0.15rem solid #ffffff;
+}
+
+.stream_button:hover {
+    box-shadow: #00429c 0 0 0 40px inset;
+}
+
+.pass_button:hover {
+    box-shadow: rgba(255, 255, 255, 0.4) 0 0 0 40px inset;
+}
+
+
+#modal {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.modal_layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+}
+
+.modal_content {
+    width: 350px;
+    height: 180px;
+    margin: 200px auto;
+    padding: 20px;
+    background: #fff;
+    border: none;
+    border-radius: 10px;
+    box-shadow: rgba(105, 105, 105, 0.4) 3px 5px 18px 10px;
+}
+
+.modal_content h2 {
+    color: black;
+    font-size: 1.3rem;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+.modal_content p {
+    color: black;
+    font-size: 1.1rem;
+    font-weight: 400;
+    text-align: center;
+    margin-top: 20px;
+}
+
+#confirm {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: white;
+    background-color: #227effc0;
+    width: 150px;
+    line-height: 1;
+    border: none;
+    border-radius: 25px;
+    margin: auto;
+    margin-top: 30px;
+    padding: 14px;
+}
+
+#confirm:hover {
+    box-shadow: #1f7cff 0 0 0 40px inset;
+}
+
+footer {
+    font-size: 0.8rem;
+    background-color: #86c3ff8c;
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+footer u {
+    cursor: pointer;
+}
+
+@media (max-width: 1330px) and (orientation: landscape) {
+    .canvas {
+        width: 100%;
+    }
+
+    .guide {
+        width: 44%;
+    }
+
+    .main_canvas {
+        height: 385px;
+        grid-template-columns: 140px 675px 140px;
+        margin-top: 20px;
+    }
+
+    .graph_container {
+        display: grid;
+        grid-template-rows: 140px 110px 110px;
+        row-gap: 10px;
+    }
+
+    .no_iris {
+        top: 35px;
+        width: 80px;
+    }
+
+    .iris_flow {
+        top: -75px;
+        width: 140px;
+        height: 140px;
+    }
+
+    .side_graph {
+        width: 140px;
+        height: 110px;
+    }
+
+    .data_flow {
+        width: 140px;
+        height: 380px;
+    }
+
+    .data_flow p {
+        top: -14%;
+        font-size: 0.7rem;
+        margin-bottom: 7px;
+    }
+
+    .data_flow div {
+        font-size: 0.6rem;
+        padding-left: 8px;
+        margin-top: 1px;
+    }
+}
+
+@media (max-width: 1024px) and (orientation: landscape) {
+    body {
+        height: 770px
+    }
+
+    .logo {
+        width: 150px;
+        margin-top: 15px;
+        margin-left: 15%;
+    }
+
+    .title {
+        font-size: 1.7rem;
+        line-height: 1.8;
+        margin-top: 5px;
+    }
+
+    .lng {
+        margin-top: 15px;
+    }
+
+    header a {
+        font-size: 0.9rem;
+        line-height: 1;
+        padding: 0;
+    }
+
+    .kr {
+        border-right: solid 0.1rem #ffffff
+    }
+
+    .main_style {
+        height: calc(770px - 83px);
+        margin-top: 30px;
+        text-align: center;
+    }
+
+    .camera {
+        width: 280px;
+        height: 215px;
+        background-image: url('../images/camera_m.png');
+    }
+
+    .main_style h2 {
+        font-size: 2rem;
+        margin-top: 80px;
+    }
+
+    .main_style p {
+        font-size: 1.2rem;
+        line-height: 1.4;
+    }
+
+    .button_box {
+        margin-top: 7vh;
+    }
+
+    .stream_button, .pass_button {
+        font-size: 1.1rem;
+        font-weight: 600;
+        padding: 12px 25px;
+    }
+
+    .stream_button {
+        padding: 14px 25px;
+    }
+
+    .data_flow p {
+        top: -29%;
+        font-size: 0.7rem;
+        margin-top: 120px;
+        margin-bottom: 7px;
+    }
+
+    .data_flow div {
+        top: -27%;
+        font-size: 0.67rem;
+        margin-top: 0.5px;
+    }
+
+    .warn_div {
+        display: none;
+        margin-top: 50px;
+    }
+
+    .warning {
+        width: 50px;
+        vertical-align: middle;
+        margin-bottom: 8px;
+    }
+
+    .stream_alert {
+        font-size: 1.7rem;
+        margin-left: 25px;
+    }
+
+    .modal_content h2 {
+        font-size: 1.3rem;
+        margin-top: 15px;
+    }
+
+    .modal_content p {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 990px) and (orientation: landscape) {
+    body {
+        height: 450px;
+    }
+
+    .logo {
+        width: 110px;
+    }
+
+    .title {
+        font-size: 1.3rem;
+        line-height: 1.5;
+    }
+
+    header a {
+        font-size: 0.7rem;
+    }
+
+    .main_style {
+        height: calc(450px - 36px);
+        margin-top: 0px;
+    }
+
+    .camera {
+        top: 30px;
+        width: 34vh;
+        height: 26vh;
+        background-image: url('../images/camera.png');
+    }
+
+    .main_style h2 {
+        font-size: 1.4rem;
+        margin-top: 60px;
+        margin-bottom: 1vh;
+    }
+
+    .main_style p {
+        font-size: 0.9rem;
+        line-height: 1.3;
+        margin-top: 0px;
+        padding-top: 15px;
+    }
+
+    .button_box {
+        display: inline;
+    }
+
+    .btn_box {
+        display: inline;
+    }
+
+    .stream_button, .pass_button {
+        width: 250px;
+        font-size: 0.95rem;
+        padding: 10px 10px;
+        margin-top: 20px;
+    }
+
+    .stream_button {
+        padding: 12px 10px;
+    }
+
+    .main_canvas {
+        position: relative;
+        top: -5px;
+        height: 285px;
+        grid-template-columns: 100px 500px 100px;
+        margin-top: 0px;
+        column-gap: 6px;
+    }
+
+    .graph_container {
+        display: grid;
+        grid-template-rows: 100px 84px 84px;
+        row-gap: 5px;
+    }
+
+    .side_graph {
+        box-shadow: #ffffff 0 0 2px;
+    }
+
+    .guide {
+        width: 40%;
+    }
+
+    .no_iris {
+        top: 25px;
+        width: 50px;
+    }
+
+    .iris_flow {
+        top: -50px;
+        width: 100px;
+        height: 100px;
+        box-shadow: #ffffff 0 0 2px;
+    }
+
+    .side_graph {
+        width: 100px;
+        height: 84px;
+    }
+
+    .data_flow {
+        width: 100px;
+        height: 285px;
+    }
+
+    .data_flow p {
+        top: -1%;
+        font-size: 0.5rem;
+        margin-bottom: 6px;
+        transform: scale(0.9);
+    }
+
+    .data_flow div {
+        font-size: 0.4rem;
+        top: 0%;
+        left: -5px;
+        padding-left: 0px;
+        margin-top: 0px;
+        transform: scale(0.75);
+    }
+
+    .graph {
+        position: relative;
+        top: -25px;
+        margin-top: 0px;
+        width: 480px;
+        height: 10px;
+    }
+
+    .graph span {
+        height: 9px;
+    }
+
+    .warn_div {
+        position: relative;
+        top: -5px;
+        margin-top: 0px;
+        margin-bottom: -30px;
+    }
+
+    .warning {
+        width: 20px;
+        margin-bottom: 4px;
+    }
+
+    .stream_alert {
+        font-size: 1.1rem;
+        margin-left: 10px;
+    }
+
+    .modal_content h2 {
+        font-size: 1.3rem;
+        margin-top: 15px;
+        margin-bottom: 0px;
+    }
+
+    .modal_content p {
+        font-size: 1.1rem;
+        margin-top: 20px;
+        padding-top: 0px;
+    }
+
+    .modal_content {
+        margin: 100px auto;
+    }
+
+    footer {
+        font-size: 0.6rem;
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+
+    footer p {
+        margin: 5px;
+    }
+}
+
+@media (max-height: 375px) and (max-width: 950px) {
+    .graph {
+        top: -10px;
+        width: 495px;
+        border-radius: 10px;
+    }
+
+    .graph span {
+        border-radius: 10px;
+    }
+
+    .warn_div {
+        top: -45px
+    }
+}
+
+@media (max-width: 720px) and (orientation: landscape) {
+    .stream_button, .pass_button {
+        width: 250px;
+        font-size: 0.87rem;
+        padding: 8px 10px;
+        margin-top: 12px;
+        border: 0.1rem solid #ffffff;
+    }
+
+    .stream_button {
+        padding: 10px 10px;
+        border: none
+    }
+
+    .lng {
+        width: 150px
+    }
+
+    .kr {
+        padding-right: 20px;
+    }
+
+    .en {
+        margin-left: 20px;
+    }
+
+    .main_canvas {
+        height: 234px;
+        grid-template-columns: 90px 410px 90px;
+        column-gap: 5px;
+    }
+
+    .graph_container {
+        grid-template-rows: 90px 67px 67px;
+    }
+
+    .no_iris {
+        width: 47px;
+    }
+
+    .iris_flow {
+        top: -45px;
+        width: 90px;
+        height: 90px;
+    }
+
+    .side_graph {
+        width: 90px;
+        height: 67px;
+    }
+
+    .data_flow {
+        width: 90px;
+        height: 234px;
+    }
+
+    .data_flow p {
+        top: -2%;
+        font-size: 0.5rem;
+        margin-bottom: 6px;
+        transform: scale(0.9);
+    }
+
+    .data_flow div {
+        left: -8px;
+        transform: scale(0.7);
+        margin-top: -1px;
+    }
+
+    .graph {
+        top: -5px;
+        width: 400px;
+    }
+
+    .warn_div {
+        top: 0px;
+        margin-top: 0px;
+    }
+
+    .modal_content {
+        width: 280px;
+        height: 130px;
+        margin: 50px auto;
+    }
+
+    .modal_content h2 {
+        font-size: 1.1rem;
+        margin-top: 5px;
+    }
+
+    .modal_content p {
+        font-size: 0.9rem;
+        margin-top: 15px;
+    }
+
+    #confirm {
+        font-size: 0.85rem;
+        width: 140px;
+        margin-top: 20px;
+        padding: 12px;
+    }
+
+    footer p {
+        transform: scale(0.9);
+    }
+}
+
+@media (max-height: 350px) and (max-width: 720px) {
+    .graph {
+        top: -5px;
+        width: 400px;
+        border-radius: 10px;
+    }
+
+    .graph span {
+        border-radius: 10px;
+    }
+
+    .warn_div {
+        top: -45px;
+        transform: scale(0.75);
+    }
+}
+
+@media (max-height: 320px) and (orientation: landscape) {
+    body {
+        height: 380px
+    }
+
+    .main_style {
+        height: calc(380px - 36px);
+    }
+}
+
+@media (max-width: 600px) and (orientation: landscape) {
+    body {
+        height: 350px;
+    }
+
+    .main_style {
+        height: calc(350px - 36px);
+    }
+
+    .main_style h2 {
+        font-size: 1.2rem;
+    }
+
+    .main_style p {
+        font-size: 0.7rem;
+    }
+
+    .main_canvas {
+        height: 200px;
+        grid-template-columns: 70px 350px 70px;
+        column-gap: 5px;
+    }
+
+    .graph_container {
+        grid-template-rows: 70px 60px 60px;
+        row-gap: 3px;
+    }
+
+    .guide {
+        margin-top: 70px;
+    }
+
+    .no_iris {
+        top: 15px;
+        width: 40px;
+    }
+
+    .iris_flow {
+        top: -40px;
+        width: 70px;
+        height: 70px;
+        box-shadow: #ffffff 0 0 2px;
+    }
+
+    .side_graph {
+        width: 70px;
+        height: 60px;
+    }
+
+    .data_flow {
+        width: 70px;
+        height: 200px;
+    }
+
+    .data_flow p {
+        top: 2%;
+        font-size: 0.5rem;
+        margin-bottom: 6px;
+        padding-top: 5px;
+        transform: scale(0.8);
+    }
+
+    .data_flow div {
+        top: 5%;
+        left: -12px;
+        transform: scale(0.55);
+        margin-top: -2px;
+    }
+
+    .graph {
+        width: 340px;
+    }
+
+    .stream_alert {
+        font-weight: 400;
+    }
+
+    .modal_content h2 {
+        font-size: 1.1rem;
+    }
+
+    .modal_content p {
+        font-size: 0.9rem;
+    }
+
+    footer p {
+        transform: scale(0.8);
+    }
+}
+
+@media (max-width: 1330px) and (orientation: portrait) {
+    body {
+        height: 1366px;
+    }
+
+    .logo {
+        width: 150px;
+        margin-top: 15px;
+        margin-left: 15%;
+    }
+
+    .title {
+        font-size: 1.7rem;
+        line-height: 1.8;
+        margin-top: 5px;
+    }
+
+    .lng {
+        margin-top: 15px;
+    }
+
+    header a {
+        font-size: 0.9rem;
+        line-height: 1;
+        padding: 0;
+    }
+
+    .kr {
+        border-right: solid 0.1rem #ffffff
+    }
+
+    .main_style {
+        height: calc(1366px - 133px);
+        margin-top: 80px;
+        text-align: center;
+    }
+
+    .camera {
+        width: 310px;
+        height: 240px;
+        background-image: url('../images/camera_m.png');
+    }
+
+    .main_style h2 {
+        font-size: 2.2rem;
+        margin-top: 90px;
+    }
+
+    .main_style p {
+        font-size: 1.25rem;
+        font-weight: 800;
+        line-height: 1.4;
+        margin-top: 40px;
+    }
+
+    .button_box {
+        margin-top: 8vh;
+    }
+
+    .stream_button, .pass_button {
+        font-size: 1.2rem;
+        font-weight: 600;
+        padding: 15px 25px;
+    }
+
+    .stream_button {
+        padding: 17px 25px;
+    }
+
+    .canvas {
+        width: 100%;
+    }
+
+    .guide {
+        width: 44%;
+    }
+
+    .canvas_box {
+        order: -1;
+        grid-column: 1/5;
+    }
+
+    .main_canvas {
+        position: relative;
+        grid-template-columns: 35px 565px 250px 35px;
+        grid-template-rows: 510px 120px 400px;
+        column-gap: 15px;
+        row-gap: 10px;
+    }
+
+    .graph_container {
+        grid-template-columns: 250px 300px;
+        grid-template-rows: 195px 195px;
+        column-gap: 15px;
+        row-gap: 10px;
+        grid-column: 2/3;
+        grid-row: 3/4;
+    }
+
+    .side_graph {
+        width: 300px;
+        height: 195px;
+    }
+
+    .side_graph:nth-child(2) {
+        grid-column: 2/3;
+        grid-row: 2/3;
+    }
+
+    .flow_container {
+        grid-column: 3/4;
+        grid-row: 3/4;
+    }
+
+    .no_iris {
+        top: 60px;
+        width: 120px;
+    }
+
+    .iris_flow {
+        top: -110px;
+        width: 250px;
+        height: 250px;
+        grid-column: 1/2;
+        grid-row: 1/3;
+    }
+
+    .data_flow {
+        width: 250px;
+        height: 400px;
+    }
+
+    .data_flow p {
+        top: -30px;
+        font-size: 1.3rem;
+    }
+
+    .data_flow div {
+        top: -30px;
+        font-size: 1rem;
+        padding-left: 20px;
+        margin-top: 2px;
+    }
+
+    .graph {
+        margin-top: -520px;
+    }
+
+    .warn_div {
+        margin-top: 30px;
+    }
+
+    .modal_content h2 {
+        font-size: 1.3rem;
+        margin-top: 15px;
+    }
+
+    .modal_content p {
+        font-size: 1.1rem;
+        font-weight: 400;
+        margin-top: 20px;
+    }
+}
+
+@media (max-width: 950px) and (orientation: portrait) {
+    body {
+        height: 1240px;
+    }
+
+    .main_style {
+        height: calc(1240px - 103px);
+        margin-top: 50px;
+    }
+
+    .main_canvas {
+        grid-template-columns: 28px 452px 200px 28px;
+        grid-template-rows: 408px 96px 320px;
+        column-gap: 12px;
+        row-gap: 8px;
+    }
+
+    .graph_container {
+        grid-template-columns: 200px 240px;
+        grid-template-rows: 156px 156px;
+        column-gap: 12px;
+        row-gap: 8px;
+    }
+
+    .side_graph {
+        width: 240px;
+        height: 156px;
+    }
+
+    .no_iris {
+        top: 53px;
+        width: 96px;
+    }
+
+    .iris_flow {
+        top: -88px;
+        width: 200px;
+        height: 200px;
+    }
+
+    .data_flow {
+        width: 200px;
+        height: 320px;
+    }
+
+    .data_flow p {
+        top: -30px;
+        font-size: 1rem;
+    }
+
+    .data_flow div {
+        font-size: 0.85rem;
+        padding-left: 18px;
+        margin-top: 1px;
+    }
+
+    .graph {
+        width: 720px;
+        height: 14px;
+        margin-top: -410px;
+    }
+
+    .graph span {
+        height: 13px;
+    }
+
+    .warn_div {
+        margin-top: 20px;
+    }
+
+    .warning {
+        width: 40px;
+        margin-bottom: 6px;
+    }
+
+    .stream_alert {
+        font-size: 1.6rem;
+        line-height: 1.2;
+        margin-left: 23px;
+    }
+}
+
+@media (max-width: 750px) and (orientation: portrait) {
+    body {
+        height: 1000px;
+    }
+
+    .main_style {
+        height: calc(1000px - 103px);
+        margin-top: 50px;
+    }
+
+    .main_canvas {
+        grid-template-columns: 23px 385px 170px 23px;
+        grid-template-rows: 350px 82px 274px;
+        column-gap: 10px;
+        row-gap: 6px;
+    }
+
+    .graph_container {
+        grid-template-columns: 170px 206px;
+        grid-template-rows: 134px 134px;
+        column-gap: 9px;
+        row-gap: 6px;
+    }
+
+    .side_graph {
+        width: 206px;
+        height: 134px;
+    }
+
+    .no_iris {
+        top: 40px;
+        width: 92px;
+    }
+
+    .iris_flow {
+        top: -85px;
+        width: 170px;
+        height: 170px;
+    }
+
+    .data_flow {
+        width: 170px;
+        height: 274px;
+    }
+
+    .data_flow p {
+        top: -30px;
+        font-size: 0.9rem;
+    }
+
+    .data_flow div {
+        top: -30px;
+        font-size: 0.78rem;
+        text-align: left;
+        padding-left: 7px;
+        margin-top: 1px;
+    }
+
+    .graph {
+        width: 620px;
+        height: 13px;
+        margin-top: -355px;
+    }
+
+    .graph span {
+        height: 12px;
+    }
+
+    .warn_div {
+        margin-top: 15px;
+    }
+
+    .stream_alert {
+        font-size: 1.4rem;
+        line-height: 1;
+        margin-left: 22px;
+    }
+}
+
+@media (max-width: 640px) and (orientation: portrait) {
+    body {
+        height: 820px;
+    }
+
+    header {
+        display: block;
+        height: 60px;
+    }
+
+    .logo {
+        width: 35vw;
+        float: left;
+        margin-top: 18px;
+        margin-left: 6vw;
+    }
+
+    .title {
+        float: right;
+        font-size: 1.1rem;
+        line-height: 1.1;
+        margin-top: 18px;
+        margin-right: 6vw;
+    }
+
+    .lng {
+        width: 50vw;
+        position: relative;
+        top: 600px;
+        margin-right: 25vw;
+        margin-left: 25vw;
+    }
+
+    header a {
+        font-size: 0.85rem;
+    }
+
+    .main_style {
+        height: calc(820px - 60px);
+        text-align: center;
+        margin-top: 0px;
+    }
+
+    .camera {
+        position: relative;
+        top: 30px;
+        width: 210px;
+        height: 155px;
+        background-image: url('../images/camera_m.png');
+    }
+
+    .main_style h2 {
+        font-size: 1.3rem;
+        margin-top: 60px;
+    }
+
+    .main_style p {
+        font-size: 0.9rem;
+        font-weight: 600;
+        line-height: 1.4;
+        margin-top: 20px;
+    }
+
+    .button_box {
+        margin-top: 8%;
+    }
+
+    .stream_button, .pass_button {
+        width: 80vw;
+        font-size: 0.85rem;
+        font-weight: 600;
+        line-height: 1.5;
+        padding: 9px 25px;
+    }
+
+    .stream_button {
+        padding: 11px 25px;
+    }
+
+    .pass_button {
+        border: 0.1rem solid #ffffff;
+    }
+
+    .main_canvas {
+        grid-template-columns: 16px 280px 124px 16px;
+        grid-template-rows: 255px 60px 200px;
+        column-gap: 10px;
+        row-gap: 6px;
+    }
+
+    .graph_container {
+        grid-template-columns: 124px 150px;
+        grid-template-rows: 97px 97px;
+        column-gap: 6px;
+        row-gap: 6px;
+    }
+
+    .side_graph {
+        width: 150px;
+        height: 97px;
+    }
+
+    .no_iris {
+        top: 30px;
+        width: 65px;
+    }
+
+    .iris_flow {
+        top: -63px;
+        width: 124px;
+        height: 124px;
+    }
+
+    .data_flow {
+        width: 124px;
+        height: 200px;
+    }
+
+    .data_flow p {
+        top: -15px;
+        font-size: 0.7rem;
+    }
+
+    .data_flow div {
+        top: -18px;
+        font-size: 0.5rem;
+        padding-left: 3px;
+        margin-top: 1.5px;
+        transform: scale(0.95);
+    }
+
+    .graph {
+        width: 450px;
+        height: 10px;
+        margin-top: -260px;
+    }
+
+    .graph span {
+        height: 9px;
+    }
+
+    .warning {
+        width: 25px;
+        margin-bottom: 2px;
+    }
+
+    .stream_alert {
+        font-size: 1rem;
+        line-height: 1;
+        margin-left: 15px;
+    }
+
+    .modal_content {
+        width: 280px;
+        height: 130px;
+        margin: 100px auto;
+    }
+
+    .modal_content h2 {
+        font-size: 1.1rem;
+        margin-top: 5px;
+    }
+
+    .modal_content p {
+        font-size: 0.9rem;
+        font-weight: 400;
+        margin-top: 15px;
+    }
+
+    #confirm {
+        font-size: 0.85rem;
+        width: 140px;
+        margin-top: 20px;
+        padding: 12px;
+    }
+
+    footer {
+        font-size: 0.6rem;
+    }
+}
+
+@media (max-width: 470px) and (orientation: portrait) {
+
+    .main_style p {
+        font-size: 0.6rem;
+        line-height: 1.2;
+        margin-top: 0px;
+    }
+
+    .main_canvas {
+        grid-template-columns: 8px 193px 85px 9px;
+        grid-template-rows: 174px 62px 157px;
+        column-gap: 8px;
+        row-gap: 6px;
+    }
+
+    .graph_container {
+        grid-template-columns: 85px 100px;
+        grid-template-rows: 76px 76px;
+        column-gap: 8px;
+        row-gap: 5px;
+    }
+
+    .guide {
+        top: -430px
+    }
+
+    .side_graph {
+        width: 100px;
+        height: 76px;
+    }
+
+    .no_iris {
+        top: 20px;
+        width: 40px;
+    }
+
+    .iris_flow {
+        top: -40px;
+        width: 85px;
+        height: 85px;
+    }
+
+    .data_flow {
+        width: 85px;
+        height: 157px;
+    }
+
+    .data_flow p {
+        top: 7px;
+        font-size: 0.5rem;
+        transform: scale(0.8);
+    }
+
+    .data_flow div {
+        top: 10px;
+        left: -10px;
+        padding-left: 0px;
+        margin-top: 0px;
+        transform: scale(0.65);
+    }
+
+    .graph {
+        width: 310px;
+        height: 7px;
+        margin-top: -220px;
+    }
+
+    .graph span {
+        height: 6px;
+    }
+
+    .warn_div {
+        margin-top: 5px;
+    }
+
+    .warning {
+        width: 20px;
+        margin-bottom: -3px;
+    }
+
+    .stream_alert {
+        font-size: 0.75rem;
+        margin-left: 5px;
+    }
+
+    .modal_content {
+        width: 230px;
+        height: 100px;
+        margin: 100px auto;
+    }
+
+    .modal_content h2 {
+        font-size: 1rem;
+        margin-top: 0px;
+    }
+
+    .modal_content p {
+        font-size: 0.8rem;
+        font-weight: 400;
+        margin-top: 10px;
+    }
+
+    #confirm {
+        font-size: 0.8rem;
+        width: 140px;
+        margin-top: 15px;
+        padding: 10px;
+    }
+}
+
+@media (max-width: 400px) and (max-height: 700px) {
+    body {
+        height: 700px;
+    }
+
+    .main_style {
+        height: calc(700px - 60px);
+    }
+}
+
+@media (max-width: 320px) {
+    body {
+        height: 680px;
+    }
+
+    .main_style {
+        height: calc(680px - 60px);
+    }
+
+    header a {
+        font-size: 0.7rem;
+    }
+
+    .lng {
+        width: 60vw;
+        margin-right: 20vw;
+        margin-left: 20vw;
+    }
+
+    .main_style p {
+        font-size: 1rem;
+        line-height: 1.3;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        transform: scale(0.7);
+        word-break: keep-all;
+    }
+
+    .main_canvas {
+        grid-template-columns: 6px 154px 68px 7px;
+        grid-template-rows: 140px 50px 126px;
+        column-gap: 5px;
+        row-gap: 6px;
+    }
+
+    .graph_container {
+        grid-template-columns: 68px 81px;
+        grid-template-rows: 61px 61px;
+        column-gap: 5px;
+        row-gap: 5px;
+    }
+
+    .guide {
+        top: -430px
+    }
+
+    .side_graph {
+        width: 81px;
+        height: 61px;
+    }
+
+    .no_iris {
+        top: 18px;
+        width: 35px;
+    }
+
+    .iris_flow {
+        top: -35px;
+        width: 68px;
+        height: 68px;
+    }
+
+    .data_flow {
+        width: 68px;
+        height: 126px;
+    }
+
+    .data_flow p {
+        top: 5px;
+        font-size: 0.5rem;
+        transform: scale(0.75);
+    }
+
+    .data_flow div {
+        top: 12px;
+        left: -13px;
+        margin-top: -3px;
+        transform: scale(0.5);
+    }
+
+    .graph {
+        width: 250px;
+        height: 7px;
+        margin-top: -180px;
+    }
+
+    .graph span {
+        height: 6px;
+    }
+
+    .warn_div {
+        margin-top: 5px;
+    }
+
+    .warning {
+        width: 15px;
+        margin-bottom: -3px;
+    }
+
+    .stream_alert {
+        font-size: 0.5rem;
+        margin-left: 5px;
+    }
+
+    .modal_content {
+        width: 200px;
+        height: 90px;
+    }
+
+    .modal_content h2 {
+        font-size: 0.9rem;
+    }
+
+    .modal_content p {
+        font-size: 0.7rem;
+        transform: scale(1);
+    }
+
+    #confirm {
+        font-size: 0.7rem;
+        width: 120px;
+        margin-top: 15px;
+        padding: 8px;
+    }
+}

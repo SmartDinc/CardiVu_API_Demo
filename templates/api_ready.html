@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta http-equiv="Expires" content="0"/>
+
+    <title>Smart Diagnosis</title>
+    <link rel="stylesheet" href="../static/style/ready_style.css">
+    <link rel="icon" href="../static/favicon.ico">
+</head>
+<body>
+<header>
+    <img class="logo" src="../static/images/logo_home.png" alt='logo_home'>
+    <div class='title'>CardiVu API Demo</div>
+    <div>
+    </div>
+</header>
+
+<main class="main_style" id='main_style'>
+
+    <div class='warn_div' id='warn_div'>
+        <span class='stream_alert' id='stream_alert'><b>측정이 완료되었습니다.</b><br>아래 정보를 입력 후, 결과보기를 눌러 확인하십시오.</span>
+    </div>
+
+    <form>
+        <div class="input_user" id="user_box">
+            <div class="input_box">
+                <input id="user_name" name="user_name" type="text" placeholder="이름" required><br>
+            </div>
+            <div class="user_grid">
+                <div class="input_box">
+                    <input id="birth" name="birth" type="text" maxlength='8' pattern="^[0-9]{8}$"
+                           oninput="limitNum(this)"
+                           placeholder="생년월일 ex)19990123" required>
+                </div>
+                <div></div>
+                <div class="input_gender">
+                    <label id="man" for="r1">남</label>
+                    <input id="r1" name="gender" type="radio" value="man">
+                </div>
+                <div class="input_gender">
+                    <label id="woman" for="r2">여</label>
+                    <input id="r2" name="gender" type="radio" value="woman" required>
+                </div>
+            </div>
+            <div class="input_box">
+                <input id="email" name="email" type="email" placeholder="메일" required><br>
+            </div>
+            <div class="info_grid" style="display: none">
+                <input id="START_IDX" name="START_IDX" type="text" value="0" required>
+                <input id="LAST_IDX" name="LAST_IDX" type="text" value="0" required>
+                <input id="CompanyCode" name="CompanyCode" type="text" value="0" required>
+                <input id="CompanyKey" name="CompanyKey" type="text" value="0" required>
+                <input id="CompanyClient" name="CompanyClient" type="text" value="0" required>
+            </div>
+        </div>
+        <div id="result_box"></div>
+    </form>
+    <button class="result_button" id="result_button">결과 보기</button>
+
+</main>
+</body>
+<script src="../static/js/api_ready.js"></script>
+</html>
