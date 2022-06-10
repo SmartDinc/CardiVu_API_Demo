@@ -1,4 +1,4 @@
-# 카디뷰: 홍채의 움직임으로 바이탈을 측정하는 헬스케어 
+# 카디뷰: 홍채의 움직임으로 바이탈을 측정하는 헬스케어 API
 
 - API가 사용되고 있는 CardiVu-W 사이트 : https://www.cardivu.com/
 - API 데모 사이트 : https://www.cardivu.com/api/
