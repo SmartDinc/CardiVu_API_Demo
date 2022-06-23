@@ -8,3 +8,7 @@
 - 데모 예제는 Python 기반의 Flask를 이용한 웹입니다.
 - CompanyCode, CompanyKey를 발급 받아야 사용할 수 있습니다.
 - CardiVu API 키 발급 문의 : http://www.sdcor.net/contact
+
+
+- 키발급 후 "api_script.js" 파일의 CompanyCode, CompanyKey, CompanyClient를 입력 후 사용하시면 됩니다.
+- CompanyClient는 추후 회원별 분류를 위한 고유키 입니다.
