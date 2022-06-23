@@ -97,19 +97,15 @@ function onmessage(OF) {
 // 측정 종료시 측정된 홍채 데이터의 시작(START_IDX)~끝(LAST_IDX) ,회사(CompanyCode, CompanyKey), 측정된 사용자(CompanyClient)의 정보를 전달해야됨
 const CardiVuAPI_Domain = "https://www.cardivu.com/";
 const CardiVuAPI_Domain_Link = CardiVuAPI_Domain + "api/measure";
-const CompanyCode = "CompanyCode";                  // 회사코드
-const CompanyKey = "CompanyKey";                    // 회사 인증키
-const CompanyClient = 0;                            // 회사의 회원별 고유키
+const CompanyCode = "CompanyCode";                        // 회사코드
+const CompanyKey = "CompanyKey";  // 회사 인증키
+const CompanyClient = 12;                         // 회사의 회원별 고유키
 let START_IDX = 0;                                  // 첫 시작시 홍채 변수 IDX
 let LAST_IDX = 0;                                   // 마지막 홍채 변수 IDX
 
 async function send_OFvec() {
     if (start_send && (cnt > 0)) {
-        if (CountIDX > 60) {
-            clearInterval(timerInterval);
-            document.location.href = "/ready?START_IDX=" + START_IDX + "&LAST_IDX=" + LAST_IDX + "&CompanyCode=" + CompanyCode + "&CompanyKey=" + CompanyKey + "&CompanyClient=" + CompanyClient;
-            // 측정 종료시
-        } else {
+        if (CountIDX < 60) {
             let formData = new FormData();
             formData.append('CompanyCode', CompanyCode);
             formData.append('CompanyKey', CompanyKey);
@@ -150,6 +146,10 @@ async function send_OFvec() {
             } catch (e) {
                 console.log(e);
             }
+        } else {
+            clearInterval(timerInterval);
+            document.location.href = "/ready?START_IDX=" + START_IDX + "&LAST_IDX=" + LAST_IDX + "&CompanyCode=" + CompanyCode + "&CompanyKey=" + CompanyKey + "&CompanyClient=" + CompanyClient;
+            // 측정 종료시
         }
     }
 }

@@ -429,7 +429,3 @@ window.onload = () => {
     setRmssd(Number(Rmssd.innerText), Number(age.innerText), gender.innerText);
     load_canvas();
 };
-
-
-
-
