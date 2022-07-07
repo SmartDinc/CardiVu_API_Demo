@@ -26,8 +26,8 @@ Githuib: https://github.com/google/mediapipe/blob/master/docs/solutions/face_mes
     <meta http-equiv="Expires" content="0"/>
 
     <title>Smart Diagnosis</title>
-    <link rel="stylesheet" href="../static/style/styles.css">
-    <link rel="icon" href="../static/favicon.ico">
+    <link rel="stylesheet" href="../../static/style/styles.css">
+    <link rel="icon" href="../../static/favicon.ico">
 
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"
@@ -39,7 +39,7 @@ Githuib: https://github.com/google/mediapipe/blob/master/docs/solutions/face_mes
 <body>
 
 <header>
-    <img class="logo" src="../static/images/logo_home.png" alt='logo_home' onclick="back_home()">
+    <img class="logo" src="../../static/images/logo_home.png" alt='logo_home' onclick="back_home()">
     <div class='title'>CardiVu API DEMO</div>
 </header>
 
@@ -48,12 +48,14 @@ Githuib: https://github.com/google/mediapipe/blob/master/docs/solutions/face_mes
     <h2 id="camera_alert"> 홍채 진단을 위해 <b>카메라 권한</b>을 허용해 주시기 바랍니다.</h2>
     <p id="alert"> 잠시 기다려 주세요. 준비 중...</p>
     <video class="video" id="input_video" playsinline></video>
-    <canvas class="canvas" id="mid_canvas" width="1280px" height="720px"></canvas>
+    <div id="mid_canvas_div">
+        <canvas class="canvas" id="mid_canvas" width="1280px" height="720px"></canvas>
+    </div>
     <div style="display: flex;">
         <div class="main_canvas" id="main_canvas">
             <div class="graph_container">
                 <div>
-                    <img class='no_iris' id='no_iris' src="../static/images/warning2.png" alt="no_iris">
+                    <img class='no_iris' id='no_iris' src="../../static/images/warning2.png" alt="no_iris">
                     <canvas class="iris_flow" id='iris_flow' width="190px" height="190px"></canvas>
                 </div>
                 <canvas class="side_graph" id='side_graph1' width="190px" height="145px"></canvas>
@@ -61,7 +63,7 @@ Githuib: https://github.com/google/mediapipe/blob/master/docs/solutions/face_mes
             </div>
             <div class='canvas_box'>
                 <canvas class="canvas" id="output_canvas" width="1280px" height="720px"></canvas>
-                <img class='guide' src="../static/images/guide.png" alt="guide">
+                <img class='guide' src="../../static/images/guide.png" alt="guide">
             </div>
             <div class="flow_container">
                 <div class='data_flow' id='data_flow'><p>Measurement Data</p></div>
@@ -70,7 +72,7 @@ Githuib: https://github.com/google/mediapipe/blob/master/docs/solutions/face_mes
     </div>
     <div class="graph" id='graph'><span id='bar'></span></div>
     <div class='warn_div' id='warn_div'>
-        <img class='warning' id='warning' src="../static/images/warning.png" alt="warning">
+        <img class='warning' id='warning' src="../../static/images/warning.png" alt="warning">
         <span class='stream_alert' id='stream_alert'>바른 자세로 정면 카메라를 응시해주세요.</span>
     </div>
 
@@ -92,10 +94,7 @@ Githuib: https://github.com/google/mediapipe/blob/master/docs/solutions/face_mes
         <div class="modal_layer"></div>
     </div>
 </main>
-
+<script async src="../../static/js/opencv.js" onload="onOpenCvReady();"></script>
+<script src="../../static/js/api_script.js"></script>
 </body>
-
-<script src="../static/js/api_script.js"></script>
-<script async src="../static/js/opencv.js" onload="onOpenCvReady();"></script>
-
 </html>

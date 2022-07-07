@@ -32,5 +32,11 @@ def report_result():
     return render_template("api_report.html")
 
 
+# 결과 가져오기
+@app.route("/result", methods=['GET', 'POST'])
+def select_result():
+    return render_template("api_result.html")
+
+
 if __name__ == "__main__":
     app.run(port=7782, debug=True, threaded=True, use_reloader=False)

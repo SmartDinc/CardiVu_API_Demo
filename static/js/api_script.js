@@ -44,6 +44,7 @@ let scan_flag = true;
 
 let face_sizes = [];
 let iris_sizes = [];
+let onResults_flag = true;
 
 faceMesh.setOptions({
     maxNumFaces: 1,
@@ -102,10 +103,11 @@ const CompanyKey = "CompanyKey";                    // 회사 인증키
 const CompanyClient = 'CompanyClient_Key';          // 회사의 회원별 고유키
 let START_IDX = 0;                                  // 첫 시작시 홍채 변수 IDX
 let LAST_IDX = 0;                                   // 마지막 홍채 변수 IDX
+let MeasureTime = 300                               // 총 측정할 시간
 
 async function send_OFvec() {
     if (start_send && (cnt > 0)) {
-        if (CountIDX < 60) {
+        if (CountIDX < MeasureTime) {
             let formData = new FormData();
             formData.append('CompanyCode', CompanyCode);
             formData.append('CompanyKey', CompanyKey);
@@ -135,7 +137,7 @@ async function send_OFvec() {
                     CountIDX = json['CountIDX'];
 
                     if (CountIDX < 0) {
-                        console.log('You can use it for up to 60 seconds.');
+                        console.log('You can use it for up to ' + MeasureTime + ' seconds.');
                     } else {
                         progress_bar(json['CountIDX']);
                     }
@@ -144,12 +146,12 @@ async function send_OFvec() {
                     throw new Error(response.status);
                 }
             } catch (e) {
-                console.log(e);
+                console.log('send_OFvec : ' + e);
             }
         } else {
+            // 측정 종료시
             clearInterval(timerInterval);
             document.location.href = "/ready?START_IDX=" + START_IDX + "&LAST_IDX=" + LAST_IDX + "&CompanyCode=" + CompanyCode + "&CompanyKey=" + CompanyKey + "&CompanyClient=" + CompanyClient;
-            // 측정 종료시
         }
     }
 }
@@ -230,43 +232,49 @@ function scanning(M, hPad, wPad) {
 }
 
 function Iris_detect(img) {
-    const par = 11;
-    const hPad = parseInt(eyeW / 3);
-    const wPad = parseInt(eyeW / 5);
+    try {
+        const par = 11;
+        const hPad = parseInt(eyeW / 3);
+        const wPad = parseInt(eyeW / 5);
 
-    let gray = new cv.Mat();
-    let m_blur = new cv.Mat();
-    let m_open = new cv.Mat();
-    let M = cv.Mat.ones(par, par, cv.CV_8U);
+        let gray = new cv.Mat();
+        let m_blur = new cv.Mat();
+        let m_open = new cv.Mat();
+        let M = cv.Mat.ones(par, par, cv.CV_8U);
 
-    cv.medianBlur(img, m_blur, par);
-    cv.morphologyEx(m_blur, m_open, cv.MORPH_OPEN, M);
-    cv.cvtColor(m_open, gray, cv.COLOR_RGBA2GRAY);
+        cv.medianBlur(img, m_blur, par);
+        cv.morphologyEx(m_blur, m_open, cv.MORPH_OPEN, M);
+        cv.cvtColor(m_open, gray, cv.COLOR_RGBA2GRAY);
 
-    let [l_scan_list, r_scan_list] = scanning(gray, hPad, wPad);
+        let [l_scan_list, r_scan_list] = scanning(gray, hPad, wPad);
 
-    let cts1 = [];
-    let cts2 = l_scan_list.reduce((arr, x, y) => {
-        if (x !== 0) {
-            arr.push(parseInt(x + wPad));
-            arr.push(parseInt(y + hPad));
-        }
-        return arr;
-    }, cts1);
+        let cts1 = [];
+        let cts2 = l_scan_list.reduce((arr, x, y) => {
+            if (x !== 0) {
+                arr.push(parseInt(x + wPad));
+                arr.push(parseInt(y + hPad));
+            }
+            return arr;
+        }, cts1);
 
-    let contours = r_scan_list.reduceRight((arr, x, y) => {
-        if (x !== 0) {
-            arr.push(parseInt(x + wPad));
-            arr.push(parseInt(y + hPad));
-        }
-        return arr;
-    }, cts2);
+        let contours = r_scan_list.reduceRight((arr, x, y) => {
+            if (x !== 0) {
+                arr.push(parseInt(x + wPad));
+                arr.push(parseInt(y + hPad));
+            }
+            return arr;
+        }, cts2);
 
-    m_blur.delete();
-    M.delete();
-    m_open.delete();
+        gray.delete();
+        m_blur.delete();
+        m_open.delete();
+        M.delete();
 
-    return contours;
+        return contours;
+    } catch (e) {
+        console.log('Iris_detect : ' + e);
+    }
+    return null;
 }
 
 function median(arr) {
@@ -281,11 +289,12 @@ function processContour(contour) {
     let M = cv.moments(contour_mat, false);
 
     const area = M.m00;
-    iris_sizes.push(area);
 
+    iris_sizes.push(area);
     if (iris_sizes.length > 190) {
         iris_sizes.shift();
     }
+
     if (area < 2000) {
         return [0, 0, 0, 0];
     }
@@ -301,87 +310,103 @@ function processContour(contour) {
 
     const threshold = median(distance);
 
+    contour_mat.delete();
+
     return [distance, threshold, cx, cy];
 }
 
-function drawContour(img, contour) {
-    let rsize = new cv.Size(irisW, irisW);
-    let roi_img = img.clone();
-    let mask = cv.Mat.zeros(eyeW, eyeW, cv.CV_8UC4);
-    let irisMat = new cv.Mat();
+function drawContour(img, contour, irisMat) {
+    try {
+        let rsize = new cv.Size(irisW, irisW);
+        let roi_img = img.clone();
+        let mask = cv.Mat.zeros(eyeW, eyeW, cv.CV_8UC4);
+        irisMat = new cv.Mat();
 
-    for (let i = 0; i < (contour.length / 2); i++) {
-        cv.circle(img, new cv.Point(contour[i * 2], contour[i * 2 + 1]), 1, [255, 0, 0, 200], -1);
-    }
-
-    const [distance, threshold, cx, cy] = processContour(contour);
-
-    if (threshold === 0) {
-        return [img, -1, -1, -1, -1];
-    }
-
-    let contour2 = distance.reduce((arr, d, i) => {
-        if (((d - threshold) > -20) && ((d - threshold) > -20)) {
-            arr.push(contour[i * 2]);
-            arr.push(contour[i * 2 + 1]);
+        for (let i = 0; i < (contour.length / 2); i++) {
+            cv.circle(img, new cv.Point(contour[i * 2], contour[i * 2 + 1]), 1, [255, 0, 0, 200], -1);
         }
-        return arr;
-    }, []);
 
-    const [distance2, threshold2, cx2, cy2] = processContour(contour2);
-    if (threshold2 === 0) {
-        return [img, -1, -1, -1, -1];
+        const [distance, threshold, cx, cy] = processContour(contour);
+
+        if (threshold === 0) {
+            return [img, -1, -1, -1, -1];
+        }
+
+        let contour2 = distance.reduce((arr, d, i) => {
+            if (((d - threshold) > -20) && ((d - threshold) > -20)) {
+                arr.push(contour[i * 2]);
+                arr.push(contour[i * 2 + 1]);
+            }
+            return arr;
+        }, []);
+
+        const [distance2, threshold2, cx2, cy2] = processContour(contour2);
+        if (threshold2 === 0) {
+            return [img, -1, -1, -1, -1];
+        }
+
+        const r2 = Math.round(threshold2) + 2;
+
+        cv.circle(img, new cv.Point(cx2, cy2), 3, [0, 0, 255, 200], -1);
+        cv.circle(img, new cv.Point(cx2, cy2), r2, [255, 255, 255, 200], 1);
+
+        cv.circle(mask, new cv.Point(cx2, cy2), r2, [255, 255, 255, 255], -1);
+
+        let iris_roi = new cv.Mat();
+        let iris_rect = new cv.Rect(cx2 - r2, cy2 - r2, r2 * 2, r2 * 2);
+
+        const mask_flag = false;
+        if (mask_flag) {
+
+            cv.cvtColor(mask, mask, cv.COLOR_RGBA2GRAY, 0);
+            cv.threshold(mask, mask, 100, 255, cv.THRESH_BINARY);
+
+            let roi_img2 = new cv.Mat();
+            cv.bitwise_and(roi_img, roi_img, roi_img2, mask);
+            iris_roi = roi_img2.roi(iris_rect);
+
+        } else {
+            iris_roi = roi_img.roi(iris_rect);
+        }
+
+        cv.resize(iris_roi, irisMat, rsize, 0, 0, cv.INTER_LINEAR);
+
+        roi_img.delete();
+        mask.delete();
+        iris_roi.delete();
+
+        return [img, irisMat, cx2, cy2, r2];
+    } catch (e) {
+        console.log('drawContour : ' + e);
     }
-
-    const r2 = Math.round(threshold2) + 2;
-
-    cv.circle(img, new cv.Point(cx2, cy2), 3, [0, 0, 255, 200], -1);
-    cv.circle(img, new cv.Point(cx2, cy2), r2, [255, 255, 255, 200], 1);
-
-    cv.circle(mask, new cv.Point(cx2, cy2), r2, [255, 255, 255, 255], -1);
-
-    let iris_roi = new cv.Mat();
-    let iris_rect = new cv.Rect(cx2 - r2, cy2 - r2, r2 * 2, r2 * 2);
-
-    const mask_flag = false;
-    if (mask_flag) {
-
-        cv.cvtColor(mask, mask, cv.COLOR_RGBA2GRAY, 0);
-        cv.threshold(mask, mask, 100, 255, cv.THRESH_BINARY);
-
-        let roi_img2 = new cv.Mat();
-        cv.bitwise_and(roi_img, roi_img, roi_img2, mask);
-        iris_roi = roi_img2.roi(iris_rect);
-
-    } else {
-        iris_roi = roi_img.roi(iris_rect);
-    }
-
-    cv.resize(iris_roi, irisMat, rsize, 0, 0, cv.INTER_LINEAR);
-    return [img, irisMat, cx2, cy2, r2];
+    return null;
 }
 
 function cross_division(frame) {
+    try {
+        let img = frame;
+        const mid = parseInt(irisW / 2);
+        let Q1 = img.roi(new cv.Rect(mid, 0, mid, mid));
+        let Q2 = img.roi(new cv.Rect(0, 0, mid, mid));
+        let Q3 = img.roi(new cv.Rect(0, mid, mid, mid));
+        let Q4 = img.roi(new cv.Rect(mid, mid, mid, mid));
 
-    let img = frame.clone();
-    const mid = parseInt(irisW / 2);
-    let Q1 = img.roi(new cv.Rect(mid, 0, mid, mid));
-    let Q2 = img.roi(new cv.Rect(0, 0, mid, mid));
-    let Q3 = img.roi(new cv.Rect(0, mid, mid, mid));
-    let Q4 = img.roi(new cv.Rect(mid, mid, mid, mid));
+        cv.flip(Q1, Q1, 0);
+        cv.flip(Q2, Q2, -1);
+        cv.flip(Q3, Q3, 1);
 
-    cv.flip(Q1, Q1, 0);
-    cv.flip(Q2, Q2, -1);
-    cv.flip(Q3, Q3, 1);
+        let Avg_top = new cv.Mat();
+        let Avg_btm = new cv.Mat();
+        let Avg_total = new cv.Mat();
+        cv.addWeighted(Q1, 0.5, Q2, 0.5, 0, Avg_top);
+        cv.addWeighted(Q3, 0.5, Q4, 0.5, 0, Avg_btm);
+        cv.addWeighted(Avg_top, 0.5, Avg_btm, 0.5, 0, Avg_total);
 
-    let Avg_top = new cv.Mat();
-    let Avg_btm = new cv.Mat();
-    let Avg_total = new cv.Mat();
-    cv.addWeighted(Q1, 0.5, Q2, 0.5, 0, Avg_top);
-    cv.addWeighted(Q3, 0.5, Q4, 0.5, 0, Avg_btm);
-    cv.addWeighted(Avg_top, 0.5, Avg_btm, 0.5, 0, Avg_total);
-
-    return [frame, Q1, Q2, Q3, Q4, Avg_total, Avg_btm];
+        return [Q1, Q2, Q3, Q4, Avg_top, Avg_total, Avg_btm];
+    } catch (e) {
+        console.log('cross_division : ' + e);
+    }
+    return null;
 }
 
 function dist(x, y) {
@@ -430,9 +455,7 @@ function drawOptFlowMap(u, v, img, step, canvas) {
 }
 
 function optical_flow(img_list, prev_list, OF_vec, canvas) {
-
     img_list.forEach((img, i) => {
-
         let flow = new cv.Mat();
         let flowVec = new cv.MatVector();
 
@@ -450,8 +473,11 @@ function optical_flow(img_list, prev_list, OF_vec, canvas) {
         } else {
             OF_vec = genOF_vec(uArray, vArray, img, 6, i - 1, OF_vec);
         }
+
+        flow.delete();
+        flowVec.delete();
     });
-    return [img_list, OF_vec];
+    return OF_vec;
 }
 
 function genOF_vec(u, v, img, step, N, OF_vec) {
@@ -538,14 +564,12 @@ function genOF_vec(u, v, img, step, N, OF_vec) {
 }
 
 function progress_bar(idx) {
-    detect_num = Math.round(idx / 60 * 1000) / 10;
+    detect_num = Math.round(idx / MeasureTime * 1000) / 10;
 }
 
 function progress_text(s) {
-
     let color;
     (s === 'error') ? color = '#ff525263' : color = '#52c4ff63';
-
 
     let buff_detect_num = detect_num;
 
@@ -720,144 +744,176 @@ function draw_eyeTracker(pts, color) {
 }
 
 function onResults(results) {
+    if (onResults_flag) {
+        onResults_flag = false;
 
-    const canvas_W = canvasElement.width;
-    const canvas_H = canvasElement.height;
+        const canvas_W = canvasElement.width;
+        const canvas_H = canvasElement.height;
 
-    canvasCtx.save();
-    canvasCtx.clearRect(0, 0, canvas_W, canvas_H);
-    canvasCtx.drawImage(results.image, 0, 0, canvas_W, canvas_H);
+        canvasCtx.save();
+        canvasCtx.clearRect(0, 0, canvas_W, canvas_H);
+        canvasCtx.drawImage(results.image, 0, 0, canvas_W, canvas_H);
 
-    midCtx.save();
-    midCtx.clearRect(0, 0, canvas_W, canvas_H);
-    midCtx.drawImage(results.image, 0, 0, canvas_W, canvas_H);
+        midCtx.save();
+        midCtx.clearRect(0, 0, canvas_W, canvas_H);
+        midCtx.drawImage(results.image, 0, 0, canvas_W, canvas_H);
 
-    irisCtx.save();
-    irisCtx.clearRect(0, 0, canvas_W, canvas_H);
+        irisCtx.save();
+        irisCtx.clearRect(0, 0, canvas_W, canvas_H);
 
-    if (results.multiFaceLandmarks) {
-        for (const landmarks of results.multiFaceLandmarks) {
+        if (results.multiFaceLandmarks) {
+            try {
+                for (const landmarks of results.multiFaceLandmarks) {
+                    const eye_idx = left_eye;
+                    const target_pts = find_eye(landmarks, eye_idx);
+                    const eye_d = ((landmarks['263'].x - landmarks['33'].x) ** 2 + (landmarks['263'].y - landmarks['33'].y) ** 2) ** (1 / 2);
+                    const yaw_del = ((landmarks['263'].z - landmarks['33'].z) * (canvasElement.width / 2)) ** 2;
+                    const roll_del = (landmarks['263'].x - landmarks['33'].x) * 10
 
-            // const eye_idx = right_eye;
-            const eye_idx = left_eye;
-            const target_pts = find_eye(landmarks, eye_idx);
-            const eye_d = ((landmarks['263'].x - landmarks['33'].x) ** 2 + (landmarks['263'].y - landmarks['33'].y) ** 2) ** (1 / 2);
-            const yaw_del = ((landmarks['263'].z - landmarks['33'].z) * (canvasElement.width / 2)) ** 2;
-            const roll_del = (landmarks['263'].x - landmarks['33'].x) * 10
-
-            face_sizes.push(eye_d)
-            if (face_sizes.length > 190) {
-                face_sizes.shift();
-            }
-
-            if ((yaw_del > 600) || (roll_del <= 0.1)) {
-
-                if (except_cnt > 5) {
-                    //drawConnectors(canvasCtx, landmarks, FACEMESH_RIGHT_EYE, { color: '#FF7070' });
-                    draw_eyeTracker(target_pts, '#ff606099');
-                    face_graph('#ff525299');
-                    if (lng === "KR") {
-                        document.getElementById("stream_alert").innerHTML = "얼굴을 정면으로 고정해주세요.";
-                    } else if (lng === "EN") {
-                        document.getElementById("stream_alert").innerHTML = "Please keep face front.";
+                    face_sizes.push(eye_d)
+                    if (face_sizes.length > 190) {
+                        face_sizes.shift();
                     }
-                    progress_increase('error');
-                    progress_text('error');
-                }
-                except_cnt += 1;
-                continue;
-            } else if (eye_d < 0.1) {
-                if (except_cnt > 5) {
-                    //drawConnectors(canvasCtx, landmarks, FACEMESH_RIGHT_EYE, { color: '#FF7070' });
-                    draw_eyeTracker(target_pts, '#ff606099');
-                    face_graph('#ff525299');
-                    if (lng === "KR") {
-                        document.getElementById("stream_alert").innerHTML = "카메라에 더 가까이 접근해 주시기 바랍니다.";
-                    } else if (lng === "EN") {
-                        document.getElementById("stream_alert").innerHTML = "Please move closer to the camera.";
+
+                    if ((yaw_del > 600) || (roll_del <= 0.1)) {
+                        if (except_cnt > 5) {
+                            draw_eyeTracker(target_pts, '#ff606099');
+                            face_graph('#ff525299');
+                            if (lng === "KR") {
+                                document.getElementById("stream_alert").innerHTML = "얼굴을 정면으로 고정해주세요.";
+                            } else if (lng === "EN") {
+                                document.getElementById("stream_alert").innerHTML = "Please keep face front.";
+                            }
+                            progress_increase('error');
+                            progress_text('error');
+                        }
+                        except_cnt += 1;
+                        continue;
+                    } else if (eye_d < 0.1) {
+                        if (except_cnt > 5) {
+                            draw_eyeTracker(target_pts, '#ff606099');
+                            face_graph('#ff525299');
+                            if (lng === "KR") {
+                                document.getElementById("stream_alert").innerHTML = "카메라에 더 가까이 접근해 주시기 바랍니다.";
+                            } else if (lng === "EN") {
+                                document.getElementById("stream_alert").innerHTML = "Please move closer to the camera.";
+                            }
+                            progress_increase('error');
+                            progress_text('error');
+                        }
+                        except_cnt += 1;
+                        continue;
                     }
-                    progress_increase('error');
-                    progress_text('error');
+
+
+                    let srcTri = cv.matFromArray(4, 1, cv.CV_32FC2, target_pts);
+                    let dstTri = cv.matFromArray(4, 1, cv.CV_32FC2, [0, 0, eyeW, 0, 0, eyeW, eyeW, eyeW]);
+                    let M = cv.getPerspectiveTransform(srcTri, dstTri);
+                    srcTri.delete();
+                    dstTri.delete();
+
+                    let src = null;
+                    try {
+                        src = cv.imread('mid_canvas');
+                    } catch (e) {
+                        console.log('cv.imread : ' + e);
+
+                        M.delete();
+                        canvasCtx.restore();
+                        midCtx.restore();
+
+                        onResults_flag = true;
+
+                        break;
+                    }
+
+                    let eyeMat = new cv.Mat();
+
+                    const dsize = new cv.Size(eyeW, eyeW);
+                    let cx = 0;
+                    let cy = 0;
+                    let r = 0;
+
+                    cv.warpPerspective(src, eyeMat, M, dsize, cv.INTER_LINEAR, cv.BORDER_CONSTANT, new cv.Scalar());
+                    src.delete();
+                    M.delete();
+
+                    const cts = Iris_detect(eyeMat);
+
+                    if (cts != null) {
+                        let irisMat = null;
+                        [eyeMat, irisMat, cx, cy, r] = drawContour(eyeMat, cts, irisMat);
+
+                        if (irisMat === -1) {
+                            except_cnt += 1;
+                            if (except_cnt > 5) {
+                                draw_eyeTracker(target_pts, '#ff606099');
+                                face_graph('#ff525299');
+                                document.getElementById("stream_alert").innerHTML = "홍채가 인식되지 않았습니다.";
+                                progress_increase('error');
+                                progress_text('error');
+                            }
+                        } else {
+                            let g_iris = new cv.Mat();
+                            cv.cvtColor(irisMat, g_iris, cv.COLOR_RGBA2GRAY);
+
+                            let img_list = cross_division(g_iris);
+                            g_iris.delete();
+
+                            if (img_list != null) {
+                                if (except_cnt >= 10) {
+                                    prev_list = img_list.slice();
+                                    except_cnt = 0;
+                                } else {
+                                    face_graph('#52c4ff99');
+                                    draw_eyeTracker(target_pts, '#52f4ff99');
+                                    document.getElementById("stream_alert").innerHTML = "바른 자세로 정면 카메라를 응시해주세요.";
+                                    progress_increase('good');
+                                    progress_text('good');
+
+                                    let OF_vec = new Array(244).fill(0);
+                                    OF_vec[0] = cx;
+                                    OF_vec[1] = cy;
+                                    OF_vec[2] = r;
+
+                                    OF_vec = optical_flow(img_list, prev_list, OF_vec, irisMat);
+
+                                    data_streaming(OF_vec);
+                                    onmessage(OF_vec);
+
+                                    for (var value of img_list) {
+                                        value.delete();
+                                    }
+                                }
+                            }
+                        }
+                        if (irisMat != null && !(typeof irisMat === 'number')) {
+                            try {
+                                irisMat.delete();
+                            } catch (e) {
+                                console.log('irisMat.delete(); : ' + e);
+                            }
+                        }
+                    }
+                    eyeMat.delete();
+                    break;
                 }
-                except_cnt += 1;
-                continue;
+            } catch (e) {
+                console.log('onResults : ' + e);
+                onResults_flag = true;
             }
-
-            let srcTri = cv.matFromArray(4, 1, cv.CV_32FC2, target_pts);
-            let dstTri = cv.matFromArray(4, 1, cv.CV_32FC2, [0, 0, eyeW, 0, 0, eyeW, eyeW, eyeW]);
-            let M = cv.getPerspectiveTransform(srcTri, dstTri);
-
-            let src = cv.imread('mid_canvas');
-            let eyeMat = new cv.Mat();
-            let irisMat = new cv.Mat();
-
-            const dsize = new cv.Size(eyeW, eyeW);
-            let cx = 0;
-            let cy = 0;
-            let r = 0;
-
-            cv.warpPerspective(src, eyeMat, M, dsize, cv.INTER_LINEAR, cv.BORDER_CONSTANT, new cv.Scalar());
-            src.delete();
-            M.delete();
-            srcTri.delete();
-            dstTri.delete();
-
-            const cts = Iris_detect(eyeMat);
-            [eyeMat, irisMat, cx, cy, r] = drawContour(eyeMat, cts);
-
-            if (irisMat === -1) {
-                eyeMat.delete();
-                except_cnt += 1;
-                if (except_cnt > 5) {
-                    //drawConnectors(canvasCtx, landmarks, FACEMESH_RIGHT_EYE, { color: '#FF7070' });
-                    draw_eyeTracker(target_pts, '#ff606099');
-                    face_graph('#ff525299');
-                    document.getElementById("stream_alert").innerHTML = "홍채가 인식되지 않았습니다.";
-                    progress_increase('error');
-                    progress_text('error');
-                }
-                continue;
-            }
-
-            let g_iris = new cv.Mat();
-            cv.cvtColor(irisMat, g_iris, cv.COLOR_RGBA2GRAY);
-
-            let img_list = cross_division(g_iris);
-
-            if (except_cnt >= 10) {
-                prev_list = img_list.slice();
-                except_cnt = 0;
-                continue;
-            }
-
-            //drawConnectors(canvasCtx, landmarks, FACEMESH_RIGHT_EYE, { color: '#3080FF' });
-            face_graph('#52c4ff99');
-            draw_eyeTracker(target_pts, '#52f4ff99');
-            document.getElementById("stream_alert").innerHTML = "바른 자세로 정면 카메라를 응시해주세요.";
-            progress_increase('good');
-            progress_text('good');
-
-            let OF_vec = new Array(244).fill(0);
-            OF_vec[0] = cx;
-            OF_vec[1] = cy;
-            OF_vec[2] = r;
-
-            [prev_list, OF_vec] = optical_flow(img_list, prev_list, OF_vec, irisMat);
-
-            data_streaming(OF_vec);
-            onmessage(OF_vec)
-
-            eyeMat.delete();
-            irisMat.delete();
+        } else {
+            face_graph('#ff525299');
+            document.getElementById("stream_alert").innerHTML = "얼굴이 인식되지 않았습니다. 화면 안에 얼굴을 맞춰주세요.";
+            progress_increase('error');
+            progress_text('error');
+            onResults_flag = true;
         }
-    } else {
-        face_graph('#ff525299');
-        document.getElementById("stream_alert").innerHTML = "얼굴이 인식되지 않았습니다. 화면 안에 얼굴을 맞춰주세요.";
-        progress_increase('error');
-        progress_text('error');
+        canvasCtx.restore();
+        midCtx.restore();
+
+        onResults_flag = true;
     }
-    canvasCtx.restore();
-    midCtx.restore();
 }
 
 function Click() {
