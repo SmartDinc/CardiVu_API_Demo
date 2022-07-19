@@ -32,10 +32,16 @@ def report_result():
     return render_template("api_report.html")
 
 
-# 결과 가져오기
+# 결과 가져오기 : http://127.0.0.1:7782/result
 @app.route("/result", methods=['GET', 'POST'])
 def select_result():
     return render_template("api_result.html")
+
+
+# 최소한 BPM만 출력되는 사이트 : http://127.0.0.1:7782/minimize
+@app.route("/minimize", methods=['GET', 'POST'])
+def minimize():
+    return render_template("api_minimize.html")
 
 
 if __name__ == "__main__":
