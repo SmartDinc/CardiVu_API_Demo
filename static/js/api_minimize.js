@@ -29,8 +29,7 @@ let BPM_List = [];
 // CardiVu API 문의 : http://www.sdcor.net/contact
 // API가 사용되고 있는 CardiVu-W 사이트 : https://www.cardivu.com/
 // 측정 종료시 측정된 홍채 데이터의 시작(START_IDX)~끝(LAST_IDX) ,회사(CompanyCode, CompanyKey), 측정된 사용자(CompanyClient)의 정보를 전달해야됨
-// const CardiVuAPI_Domain = "https://www.cardivu.com/";
-const CardiVuAPI_Domain = "http://127.0.0.1:5555/";
+const CardiVuAPI_Domain = "https://www.cardivu.com/";
 const CardiVuAPI_Domain_Link = CardiVuAPI_Domain + "api/measure";
 const CompanyCode = "CompanyCode";                  // 회사코드
 const CompanyKey = "CompanyKey";                    // 회사 인증키
